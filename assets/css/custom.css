@@ -1,0 +1,133 @@
+/* Keep minimal; Bootstrap is primary */ 
+.hero { min-height: 100vh; }
+.card-hover:hover { transform: translateY(-2px); transition: .2s; }
+.cursor-pointer { cursor: pointer; }
+ 
+/* General background */
+/* Full page background */
+/* Full page background */
+html, body {
+  height: 100%;
+  background-color: #e9ecef; /* grey background everywhere */
+  margin: 0;
+  padding: 0;
+}
+
+/* Ensure hero blends into grey */
+.hero {
+  background-color: #e9ecef;
+}
+
+/* Keep cards lighter so they stand out */
+.card {
+  background-color: #f8f9fa; /* light grey/white for contrast */
+  border: 1px solid #dee2e6;
+  border-radius: 0.75rem;
+}
+
+/* Footer also blends with page */
+footer {
+  background-color: #e9ecef;
+  border-top: 1px solid #dee2e6;
+  color: #495057;
+}
+
+
+
+/* Reduce navbar height */
+.navbar {
+  padding-top: 0.0rem;   /* less vertical padding */
+  padding-bottom: 0.0rem;
+  margin: 0%;
+  min-height: 20px;       /* force navbar height */
+}
+
+/* Make logo fill navbar height */
+.navbar-brand img {
+  height: 150%;           /* take full navbar height */
+  max-height: 60px;       /* match navbar height */
+  width: auto; 
+  margin-left: 5px;           /* keep proportions */
+}
+
+/* ===== Global grey theme ===== */
+html, body {
+  height: 100%;
+  background-color: #e9ecef; /* page background grey */
+  color: #212529;
+  margin: 0;
+}
+
+/* Space for fixed navbar */
+body { padding-top: 64px; }
+
+/* Navbar height + look */
+.navbar {
+  padding-top: .25rem;
+  padding-bottom: .25rem;
+  background-color: #ffffff;
+  border-bottom: 1px solid #dee2e6;
+}
+.navbar-brand img { height: 32px; }
+.navbar .nav-link { color: #212529; }
+.navbar .nav-link:hover, .navbar .nav-link.active { color: #0d6efd; }
+
+/* Hero */
+.hero { min-height: 80vh; position: relative; color: #fff; }
+.hero::before { content:""; position:absolute; inset:0; background: rgba(0,0,0,.35); }
+.hero > .container { position: relative; z-index: 1; }
+
+/* Cards (rounded + contrast on grey bg) */
+.card {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 1rem;
+  overflow: hidden; /* let top image follow radius */
+}
+.card-hover:hover { box-shadow: 0 6px 16px rgba(0,0,0,.08); transform: translateY(-3px); transition: .2s; }
+.card-img-top { border-top-left-radius: 1rem; border-top-right-radius: 1rem; }
+
+/* Badges + buttons */
+.badge.text-bg-secondary { background-color:#dee2e6; color:#212529; }
+.badge.text-bg-success { background-color:#198754; }
+
+/* Gallery thumbs */
+.gallery-thumb { overflow: hidden; border-radius: .75rem; }
+.gallery-thumb img, .gallery-thumb video { width:100%; height:220px; object-fit:cover; display:block; }
+
+/* Smooth anchor offset so sections don't hide under fixed navbar */
+#features, #gallery, #contact { scroll-margin-top: 72px; }
+
+/* Footer (if you have one) */
+footer { background:#e9ecef; border-top:1px solid #dee2e6; color:#495057; }
+
+
+/* circular icon chips for features */
+.icon-badge{
+  width:48px;height:48px;
+  display:inline-flex;align-items:center;justify-content:center;
+  border-radius:50%;
+  background:#e9ecef;color:#0d6efd;
+  font-size:1.25rem;
+}
+body {
+  margin: 0;              /* remove default browser margin */
+  padding: 0;
+}
+
+.hero {
+  margin-top: 0;          /* remove top margin */
+  padding-top: 0;         /* optional, ensures no extra padding */
+}
+
+#features .card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+/* On hover: pop */
+#features .card:hover {
+  transform: scale(1.05);  /* makes card slightly bigger */
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15); /* stronger shadow */
+}
+
