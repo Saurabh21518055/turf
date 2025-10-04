@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Buttons
   qs("#btnSearch")?.addEventListener("click", () => {
     loadTurfs();
-    scrollToTurfs();  // Scroll to Available Turfs after Search
+    scrollToTurfs(0.95);  // Scroll to Available Turfs (95%)
   });
 
   qs("#btnReset")?.addEventListener("click", () => {
@@ -34,8 +34,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     qs("#fltCity").value = "";
     populateAreas(st, "");
     qs("#fltArea").value = "";
-    loadTurfs();  // auto filter on state change
-    scrollToTurfs();  // Scroll to Available Turfs after state change
+    loadTurfs();                 // auto filter on state change
+    scrollToTurfs(0.95);         // Scroll to Available Turfs (95%)
   });
 
   qs("#fltCity")?.addEventListener("change", () => {
@@ -43,13 +43,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     const ct = qs("#fltCity").value;
     populateAreas(st, ct);
     qs("#fltArea").value = "";
-    loadTurfs();  // auto filter on city change
-    scrollToTurfs();  // Scroll to Available Turfs after city change
+    loadTurfs();                 // auto filter on city change
+    scrollToTurfs(0.95);         // Scroll to Available Turfs (95%)
   });
 
   qs("#fltArea")?.addEventListener("change", () => {
-    loadTurfs();  // auto filter on area change
-    scrollToTurfs();  // Scroll to Available Turfs after area change
+    loadTurfs();                 // auto filter on area change
+    scrollToTurfs(0.95);         // Scroll to Available Turfs (95%)
   });
 
   // ✅ Auto-apply for Search, Rating, Price
@@ -67,17 +67,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (e.key === "Enter") {
       e.preventDefault();
       qs("#btnSearch")?.click();
+      scrollToTurfs(0.95);             // Scroll to Available Turfs (95%) after pressing Enter
     }
   };
   ["#txtSearch", "#fltState", "#fltCity", "#fltArea", "#fltFacility", "#fltPrice", "#fltRating", "#sortBy"]
     .forEach(sel => qs(sel)?.addEventListener("keydown", enterToSearch));
 });
 
-// Scroll to Available Turfs section
-function scrollToTurfs() {
+// Scroll to Available Turfs section with a specified percentage (95%)
+function scrollToTurfs(percentage = 0.95) {
   const turfsSection = qs('#turfList');
   if (turfsSection) {
-    turfsSection.scrollIntoView({ behavior: 'smooth' });
+    // Scroll to 95% of the page height, or full height (default)
+    const scrollPosition = window.innerHeight * percentage;
+    window.scrollTo({ top: scrollPosition, behavior: 'smooth' });
   }
 }
 
@@ -255,6 +258,9 @@ function demoTurfs() {
     { id: 5, name: "Urban Kick-Off", state: "Karnataka", city: "Bengaluru", area: "Koramangala", price: 950, rating: 4.5, facilities: ["Parking", "Washroom"], photo: "assets/img/turff.jpg" }
   ];
 }
+
+
+
 
 
 
