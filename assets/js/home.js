@@ -1,57 +1,99 @@
+// assets/js/home.js
+
 document.addEventListener("DOMContentLoaded", async () => {
-  // TODO: fetch filter datasets from API if available
-  // render turfs
   await loadTurfs();
+
   qs("#btnSearch")?.addEventListener("click", ()=>loadTurfs());
-  qs("#btnReset")?.addEventListener("click", ()=>{ qsa("select, input").forEach(el=>el.value=""); loadTurfs(); });
+  qs("#btnReset")?.addEventListener("click", ()=>{
+    qsa("select, input").forEach(el=>el.value="");
+    loadTurfs();
+  });
+  qs("#sortBy")?.addEventListener("change", ()=>loadTurfs());
 });
 
+/* ========= SORT HELPERS (minimal) ========= */
+function _norm(s){ return (s||"").toString().toLowerCase().trim(); }
+function _tokens(q){ return _norm(q).split(/\s+/).filter(Boolean); }
+
+function relevanceScore(t, q){
+  if (!q) return 0;
+  const name = _norm(t.name);
+  const city = _norm(t.city);
+  const area = _norm(t.area);
+  const facs = Array.isArray(t.facilities) ? t.facilities.map(_norm).join(" ") : "";
+  const hay  = `${name} ${city} ${area} ${facs}`;
+  const toks = _tokens(q);
+  if (!toks.length) return 0;
+
+  let score = 0;
+  if (hay.includes(_norm(q))) score += 150; // full-phrase bonus
+  for (const tok of toks){
+    if (name.includes(tok)) score += 100;
+    if (city.includes(tok)) score += 40;
+    if (area.includes(tok)) score += 25;
+    if (facs.includes(tok)) score += 15;
+    if (name.startsWith(tok)) score += 50;
+    if (name === tok) score += 200;
+  }
+  // gentle tie-breaks
+  const rating = Number(t.rating)||0;
+  const price  = Number(t.price)||0;
+  score += rating * 2;
+  score -= Math.min(price, 5000) / 200;
+  return score;
+}
+
+function getComparator(sortBy, q){
+  return (a,b) => {
+    const pa = Number(a.price)||0, pb = Number(b.price)||0;
+    const ra = Number(a.rating)||0, rb = Number(b.rating)||0;
+
+    switch (sortBy) {
+      case "priceAsc":  return (pa - pb) || (rb - ra) || a.name.localeCompare(b.name);
+      case "priceDesc": return (pb - pa) || (rb - ra) || a.name.localeCompare(b.name);
+      case "ratingDesc":return (rb - ra) || (pa - pb) || a.name.localeCompare(b.name);
+      case "relevance":
+      default: {
+        const sa = relevanceScore(a, q);
+        const sb = relevanceScore(b, q);
+        return (sb - sa) || (rb - ra) || (pa - pb) || a.name.localeCompare(b.name);
+      }
+    }
+  };
+}
+/* ======== /SORT HELPERS ========= */
+
 async function loadTurfs(){
-  const q = qs("#txtSearch")?.value?.trim() || "";
-  const state = qs("#fltState")?.value || "";
-  const city = qs("#fltCity")?.value || "";
-  const area = qs("#fltArea")?.value || "";
-  const facility = qs("#fltFacility")?.value || "";
-  const price = qs("#fltPrice")?.value || "";
-  const rating = qs("#fltRating")?.value || "";
-  const sortBy = qs("#sortBy")?.value || "relevance";
+  const q        = qs("#txtSearch")?.value?.trim() || "";
+  const sortBy   = qs("#sortBy")?.value || "relevance";
 
-  // demo: replace with API call
-  // const data = await api(`/turfs?state=${state}&city=${city}&...`);
-  const data = demoTurfs(); // mock
+  // demo: replace with API call when ready
+  // const rows = await api(`/turfs?...`);
+  const rows = demoTurfs(); // mock data
 
- const list = qs("#turfList");
-list.innerHTML = data.map(t => {
-  const href = `turf-details.html?tid=${t.id}`;
-  return `
+  // ✅ sort
+  rows.sort(getComparator(sortBy, q));
+
+  const list = qs("#turfList");
+  list.innerHTML = rows.map(t => `
     <div class="col">
-      <!-- position-relative is required for stretched-link -->
       <div class="card h-100 card-hover position-relative">
-
-        <!-- Make the IMAGE clickable -->
-        <a href="${href}">
-          <img class="card-img-top" src="${t.photo}" alt="${t.name}">
+        <a href="turf-details.html?tid=${t.id}" class="ratio ratio-16x9">
+          <img class="w-100 h-100 rounded-top" style="object-fit:cover" src="${t.photo}" alt="${t.name}">
         </a>
-
         <div class="card-body">
-          <h5 class="card-title">${t.name}</h5>
-          <p class="text-muted small mb-1">${t.area}, ${t.city}</p>
-          <div class="d-flex justify-content-between">
+          <h5 class="card-title mb-1">${t.name}</h5>
+          <p class="text-muted small mb-2">${t.area}, ${t.city}</p>
+          <div class="d-flex justify-content-between mb-2">
             <span class="badge text-bg-secondary">₹${t.price}/hr</span>
             <span class="badge text-bg-success">${t.rating} ★</span>
           </div>
-
-          <!-- Keep the button if you like -->
-          <a class="btn btn-sm btn-primary w-100 mt-3" href="${href}">View Details</a>
-
-          <!-- Make the WHOLE card clickable (image + body) -->
-          <a href="${href}" class="stretched-link" aria-label="Open ${t.name} details"></a>
+          <a class="btn btn-sm btn-primary w-100" href="turf-details.html?tid=${t.id}">View Details</a>
+          <a href="turf-details.html?tid=${t.id}" class="stretched-link" aria-label="Open ${t.name} details"></a>
         </div>
       </div>
     </div>
-  `;
-}).join("");
-
+  `).join("");
 }
 
 // mock data
@@ -62,77 +104,42 @@ function demoTurfs(){
     {id:3,name:"Sunrise Arena",city:"Pune",area:"Kothrud",price:650,rating:4.2,photo:"assets/img/turffff.jpg"}
   ];
 }
-//-----------------------
-// document.addEventListener("DOMContentLoaded", async () => {
-//   await loadTurfs();
 
+// document.addEventListener("DOMContentLoaded", async () => {
+//   // TODO: fetch filter datasets from API if available
+//   // render turfs
+//   await loadTurfs();
 //   qs("#btnSearch")?.addEventListener("click", ()=>loadTurfs());
-//   qs("#btnReset")?.addEventListener("click", ()=>{
-//     qsa("select, input").forEach(el => el.value = "");
-//     loadTurfs();
-//   });
+//   qs("#btnReset")?.addEventListener("click", ()=>{ qsa("select, input").forEach(el=>el.value=""); loadTurfs(); });
 // });
 
 // async function loadTurfs(){
-//   const q        = qs("#txtSearch")?.value?.trim().toLowerCase() || "";
-//   const state    = qs("#fltState")?.value || "";
-//   const city     = qs("#fltCity")?.value || "";
-//   const area     = qs("#fltArea")?.value || "";
+//   const q = qs("#txtSearch")?.value?.trim() || "";
+//   const state = qs("#fltState")?.value || "";
+//   const city = qs("#fltCity")?.value || "";
+//   const area = qs("#fltArea")?.value || "";
 //   const facility = qs("#fltFacility")?.value || "";
-//   const price    = qs("#fltPrice")?.value || "";
-//   const rating   = parseFloat(qs("#fltRating")?.value || "0");
-//   const sortBy   = qs("#sortBy")?.value || "relevance";
+//   const price = qs("#fltPrice")?.value || "";
+//   const rating = qs("#fltRating")?.value || "";
+//   const sortBy = qs("#sortBy")?.value || "relevance";
 
-//   // Replace with API call later:
-//   // const data = await api(`/turfs?...`);
-//   let rows = demoTurfs();
+//   // demo: replace with API call
+//   // const data = await api(`/turfs?state=${state}&city=${city}&...`);
+//   const data = demoTurfs(); // mock
 
-//   // --- FILTERING ---
-//   rows = rows.filter(t => {
-//     if (state && t.state !== state) return false;
-//     if (city && t.city !== city) return false;
-//     if (area && t.area !== area) return false;
-
-//     if (facility) {
-//       const has = (t.facilities || []).map(f => f.toLowerCase());
-//       if (!has.includes(facility.toLowerCase())) return false;
-//     }
-
-//     if (rating && Number(t.rating) < rating) return false;
-
-//     if (price) {
-//       if (price === "lt500" && !(t.price < 500)) return false;
-//       if (price === "500-1000" && !(t.price >= 500 && t.price <= 1000)) return false;
-//       if (price === "gt1000" && !(t.price > 1000)) return false;
-//     }
-
-//     if (q) {
-//       const hay = `${t.name} ${t.city} ${t.area}`.toLowerCase();
-//       if (!hay.includes(q)) return false;
-//     }
-
-//     return true;
-//   });
-
-//   // --- SORTING ---
-//   rows.sort((a,b) => {
-//     if (sortBy === "priceAsc") return a.price - b.price;
-//     if (sortBy === "priceDesc") return b.price - a.price;
-//     if (sortBy === "ratingDesc") return b.rating - a.rating;
-//     return 0; // relevance fallback
-//   });
-
-//   // --- RENDER ---
-//   const list = qs("#turfList");
-//   if (!rows.length) {
-//     list.innerHTML = `<div class="col"><div class="alert alert-light border">No turfs match your filters.</div></div>`;
-//     return;
-//   }
-
-//   list.innerHTML = rows.map(t => `
+//  const list = qs("#turfList");
+// list.innerHTML = data.map(t => {
+//   const href = `turf-details.html?tid=${t.id}`;
+//   return `
 //     <div class="col">
-//       <div class="card h-100 card-hover">
-//         <img class="card-img-top" src="${t.photo}" alt="${t.name}">
+//       <!-- position-relative is required for stretched-link -->
+//       <div class="card h-100 card-hover position-relative">
+
+//         <!-- Make the IMAGE clickable -->
+//         <a href="${href}">
+//           <img class="card-img-top" src="${t.photo}" alt="${t.name}">
+//         </a>
+
 //         <div class="card-body">
 //           <h5 class="card-title">${t.name}</h5>
 //           <p class="text-muted small mb-1">${t.area}, ${t.city}</p>
@@ -140,25 +147,25 @@ function demoTurfs(){
 //             <span class="badge text-bg-secondary">₹${t.price}/hr</span>
 //             <span class="badge text-bg-success">${t.rating} ★</span>
 //           </div>
-//         </div>
-//         <div class="card-footer bg-transparent border-0">
-//           <a class="btn btn-sm btn-primary w-100" href="turf-details.html?tid=${t.id}">View Details</a>
+
+//           <!-- Keep the button if you like -->
+//           <a class="btn btn-sm btn-primary w-100 mt-3" href="${href}">View Details</a>
+
+//           <!-- Make the WHOLE card clickable (image + body) -->
+//           <a href="${href}" class="stretched-link" aria-label="Open ${t.name} details"></a>
 //         </div>
 //       </div>
 //     </div>
-//   `).join("");
+//   `;
+// }).join("");
+
 // }
 
-// // --- MOCK DATA ---
+// // mock data
 // function demoTurfs(){
 //   return [
-//     {id:1,name:"Green Field Arena",state:"Maharashtra",city:"Mumbai",area:"Andheri",price:800,rating:4.6,facilities:["Parking","Floodlights"],photo:"assets/img/myturf.jpg"},
-//     {id:2,name:"City Sports Turf",state:"Maharashtra",city:"Mumbai",area:"Bandra",price:700,rating:4.4,facilities:["Washroom"],photo:"assets/img/turff.jpg"},
-//     {id:3,name:"Sunrise Arena",state:"Maharashtra",city:"Pune",area:"Kothrud",price:650,rating:4.2,facilities:["Parking"],photo:"assets/img/turffff.jpg"},
-//     {id:4,name:"Victory Grounds",state:"Gujarat",city:"Ahmedabad",area:"Navrangpura",price:1200,rating:4.8,facilities:["Floodlights","Parking"],photo:"assets/img/turf4.jpg"}
+//     {id:1,name:"Green Field Arena",city:"Mumbai",area:"Andheri",price:800,rating:4.6,photo:"assets/img/myturf.jpg"},
+//     {id:2,name:"City Sports Turf",city:"Mumbai",area:"Bandra",price:700,rating:4.4,photo:"assets/img/turff.jpg"},
+//     {id:3,name:"Sunrise Arena",city:"Pune",area:"Kothrud",price:650,rating:4.2,photo:"assets/img/turffff.jpg"}
 //   ];
 // }
-
-// // --- tiny helpers ---
-// function qs(s){ return document.querySelector(s); }
-// function qsa(s){ return document.querySelectorAll(s); }
