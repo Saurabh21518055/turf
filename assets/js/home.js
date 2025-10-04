@@ -20,11 +20,19 @@ async function loadTurfs(){
   // const data = await api(`/turfs?state=${state}&city=${city}&...`);
   const data = demoTurfs(); // mock
 
-  const list = qs("#turfList");
-  list.innerHTML = data.map(t => `
+ const list = qs("#turfList");
+list.innerHTML = data.map(t => {
+  const href = `turf-details.html?tid=${t.id}`;
+  return `
     <div class="col">
-      <div class="card h-100 card-hover">
-        <img class="card-img-top" src="${t.photo}" alt="${t.name}">
+      <!-- position-relative is required for stretched-link -->
+      <div class="card h-100 card-hover position-relative">
+
+        <!-- Make the IMAGE clickable -->
+        <a href="${href}">
+          <img class="card-img-top" src="${t.photo}" alt="${t.name}">
+        </a>
+
         <div class="card-body">
           <h5 class="card-title">${t.name}</h5>
           <p class="text-muted small mb-1">${t.area}, ${t.city}</p>
@@ -32,13 +40,18 @@ async function loadTurfs(){
             <span class="badge text-bg-secondary">₹${t.price}/hr</span>
             <span class="badge text-bg-success">${t.rating} ★</span>
           </div>
-        </div>
-        <div class="card-footer bg-transparent border-0">
-          <a class="btn btn-sm btn-primary w-100" href="turf-details.html?tid=${t.id}">View Details</a>
+
+          <!-- Keep the button if you like -->
+          <a class="btn btn-sm btn-primary w-100 mt-3" href="${href}">View Details</a>
+
+          <!-- Make the WHOLE card clickable (image + body) -->
+          <a href="${href}" class="stretched-link" aria-label="Open ${t.name} details"></a>
         </div>
       </div>
     </div>
-  `).join("");
+  `;
+}).join("");
+
 }
 
 // mock data
