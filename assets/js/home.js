@@ -1,16 +1,86 @@
-
 // assets/js/home.js
 
 document.addEventListener("DOMContentLoaded", async () => {
+  // seed data (replace with API when ready)
+  DATA = demoTurfs();
+
+  // build dependent dropdowns from DATA
+  populateStates();
+  populateCities("");   // all cities initially
+  populateAreas("", ""); // all areas initially
+
   await loadTurfs();
 
   qs("#btnSearch")?.addEventListener("click", ()=>loadTurfs());
   qs("#btnReset")?.addEventListener("click", ()=>{
     qsa("select, input").forEach(el=>el.value="");
+    populateCities("");
+    populateAreas("", "");
     loadTurfs();
   });
   qs("#sortBy")?.addEventListener("change", ()=>loadTurfs());
+
+  // Cascading filters
+  qs("#fltState")?.addEventListener("change", () => {
+    const st = qs("#fltState").value;
+    populateCities(st);
+    // reset area when state changes
+    qs("#fltArea").value = "";
+    populateAreas(st, "");
+  });
+
+  qs("#fltCity")?.addEventListener("change", () => {
+    const st = qs("#fltState").value;
+    const ct = qs("#fltCity").value;
+    populateAreas(st, ct);
+  });
+
+  // ✅ Press Enter in any filter → click Search
+  const enterToSearch = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      qs("#btnSearch")?.click();
+    }
+  };
+  ["#txtSearch","#fltState","#fltCity","#fltArea","#fltFacility","#fltPrice","#fltRating","#sortBy"]
+    .forEach(sel => qs(sel)?.addEventListener("keydown", enterToSearch));
 });
+
+/* ========= GLOBAL (mock until API) ========= */
+let DATA = []; // filled from demoTurfs() for now
+
+/* ========= GEO HELPERS (build from DATA) ========= */
+function uniqSorted(arr){ return [...new Set(arr)].filter(Boolean).sort((a,b)=>a.localeCompare(b)); }
+
+function getStates(){
+  return uniqSorted(DATA.map(r=>r.state));
+}
+function getCities(state){
+  return uniqSorted(DATA
+    .filter(r => !state || r.state === state)
+    .map(r => r.city));
+}
+function getAreas(state, city){
+  return uniqSorted(DATA
+    .filter(r => (!state || r.state === state) && (!city || r.city === city))
+    .map(r => r.area));
+}
+
+function populateStates(){
+  const el = qs("#fltState"); if (!el) return;
+  const opts = ['<option value="">State</option>', ...getStates().map(s=>`<option value="${s}">${s}</option>`)];
+  el.innerHTML = opts.join("");
+}
+function populateCities(state){
+  const el = qs("#fltCity"); if (!el) return;
+  const cities = getCities(state);
+  el.innerHTML = ['<option value="">City</option>', ...cities.map(c=>`<option value="${c}">${c}</option>`)].join("");
+}
+function populateAreas(state, city){
+  const el = qs("#fltArea"); if (!el) return;
+  const areas = getAreas(state, city);
+  el.innerHTML = ['<option value="">Area</option>', ...areas.map(a=>`<option value="${a}">${a}</option>`)].join("");
+}
 
 /* ========= SORT HELPERS ========= */
 function _norm(s){ return (s||"").toString().toLowerCase().trim(); }
@@ -75,8 +145,9 @@ async function loadTurfs(){
   const ratingF  = parseFloat(qs("#fltRating")?.value || "0");
   const sortBy   = qs("#sortBy")?.value || "relevance";
 
-  // TODO: replace with API
-  let rows = demoTurfs();
+  // Replace with API call when ready:
+  // let rows = await api(`/turfs?...`);
+  let rows = DATA.slice();
 
   // FILTERS
   rows = rows.filter(t => {
@@ -92,9 +163,10 @@ async function loadTurfs(){
     if (ratingF && (Number(t.rating)||0) < ratingF) return false;
 
     if (priceF) {
-      if (priceF === "lt500"     && !((Number(t.price)||0) < 500)) return false;
-      if (priceF === "500-1000"  && !((Number(t.price)||0) >= 500 && (Number(t.price)||0) <= 1000)) return false;
-      if (priceF === "gt1000"    && !((Number(t.price)||0) > 1000)) return false;
+      const p = Number(t.price)||0;
+      if (priceF === "lt500"     && !(p < 500)) return false;
+      if (priceF === "500-1000"  && !(p >= 500 && p <= 1000)) return false;
+      if (priceF === "gt1000"    && !(p > 1000)) return false;
     }
 
     if (q) {
@@ -139,7 +211,7 @@ async function loadTurfs(){
   }).join("");
 }
 
-// mock data
+/* ------- MOCK DATA (keep in sync with your options) ------- */
 function demoTurfs(){
   return [
     {id:1,name:"Green Field Arena",state:"Maharashtra",city:"Mumbai",area:"Andheri",price:800,rating:4.6,facilities:["Parking","Floodlights"],photo:"assets/img/myturf.jpg"},
@@ -149,6 +221,7 @@ function demoTurfs(){
     {id:5,name:"Urban Kick-Off",state:"Karnataka",city:"Bengaluru",area:"Koramangala",price:950,rating:4.5,facilities:["Parking","Washroom"],photo:"assets/img/turf5.jpg"}
   ];
 }
+
 
 // // assets/js/home.js
 
