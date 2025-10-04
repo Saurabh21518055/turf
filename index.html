@@ -9,17 +9,12 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
   <style>
-    /* Hero background image */
-    .hero {
-  --hero-bg: url('https://images.unsplash.com/photo-1459865264687-595d652de67e?auto=format&fit=crop&w=2070&q=80');
-  background-image: var(--hero-bg);
-  background-size: cover;
-  background-position: center;
-  min-height: 100vh;  /* increase height (try 70vh, 80vh, 100vh) */
-  display: flex;
-  align-items: center;
-}
-
+    .hero{
+      --hero-bg:url('https://images.unsplash.com/photo-1459865264687-595d652de67e?auto=format&fit=crop&w=2070&q=80');
+      background-image:var(--hero-bg);
+      background-size:cover;background-position:center;
+      min-height:100vh;display:flex;align-items:center;
+    }
   </style>
 </head>
 <body class="bg-light" data-active="browse">
@@ -39,20 +34,41 @@
                   <input id="txtSearch" type="text" class="form-control" placeholder="Search by turf name or area…">
                 </div>
                 <div class="col-6 col-md">
-                  <select id="fltState" class="form-select"><option value="">State</option></select>
+                  <!-- ADDED options -->
+                  <select id="fltState" class="form-select">
+                    <option value="">State</option>
+                    <option value="Maharashtra">Maharashtra</option>
+                    <option value="Gujarat">Gujarat</option>
+                    <option value="Karnataka">Karnataka</option>
+                  </select>
                 </div>
                 <div class="col-6 col-md">
-                  <select id="fltCity" class="form-select"><option value="">City</option></select>
+                  <!-- ADDED options -->
+                  <select id="fltCity" class="form-select">
+                    <option value="">City</option>
+                    <option value="Mumbai">Mumbai</option>
+                    <option value="Pune">Pune</option>
+                    <option value="Ahmedabad">Ahmedabad</option>
+                    <option value="Bengaluru">Bengaluru</option>
+                  </select>
                 </div>
                 <div class="col-6 col-md">
-                  <select id="fltArea" class="form-select"><option value="">Area</option></select>
+                  <!-- ADDED options -->
+                  <select id="fltArea" class="form-select">
+                    <option value="">Area</option>
+                    <option value="Andheri">Andheri</option>
+                    <option value="Bandra">Bandra</option>
+                    <option value="Kothrud">Kothrud</option>
+                    <option value="Navrangpura">Navrangpura</option>
+                    <option value="Koramangala">Koramangala</option>
+                  </select>
                 </div>
                 <div class="col-6 col-md">
                   <select id="fltFacility" class="form-select">
                     <option value="">Facilities</option>
-                    <option value="parking">Parking</option>
-                    <option value="washroom">Washroom</option>
-                    <option value="floodlights">Floodlights</option>
+                    <option value="Parking">Parking</option>
+                    <option value="Washroom">Washroom</option>
+                    <option value="Floodlights">Floodlights</option>
                   </select>
                 </div>
                 <div class="col-6 col-md">
@@ -83,9 +99,8 @@
       </div>
     </div>
   </section>
-                   
+
   <main class="container py-4">
-    <!-- Available Turfs -->
     <div class="d-flex align-items-center justify-content-between mb-2">
       <h2 class="h4 m-0">Available Turfs</h2>
       <div>
@@ -97,84 +112,62 @@
         </select>
       </div>
     </div>
+
     <div id="turfList" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3"></div>
 
     <!-- Features -->
-    
-      <section id="features" class="py-5">
-  <div class="container">
-    <h2 class="h3 mb-5 text-start">Features</h2>
-    <div class="row g-4 justify-content-center">
-      <div class="col-6 col-md-3">
-        <div class="card h-100 border-0 shadow rounded-4 text-center">
-          <div class="card-body p-4">
-            <div class="mb-3 fs-1 text-primary">
-              <i class="bi bi-lightbulb-fill"></i>
+    <section id="features" class="py-5">
+      <div class="container">
+        <h2 class="h3 mb-5 text-start">Features</h2>
+        <div class="row g-4 justify-content-center">
+          <div class="col-6 col-md-3">
+            <div class="card h-100 border-0 shadow rounded-4 text-center">
+              <div class="card-body p-4">
+                <div class="mb-3 fs-1 text-primary"><i class="bi bi-lightbulb-fill"></i></div>
+                <h5 class="fw-bold">Floodlights</h5>
+                <p class="text-muted small mb-0">Play at night with bright floodlights.</p>
+              </div>
             </div>
-            <h5 class="fw-bold">Floodlights</h5>
-            <p class="text-muted small mb-0">Play at night with bright floodlights.</p>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="card h-100 border-0 shadow rounded-4 text-center">
+              <div class="card-body p-4">
+                <div class="mb-3 fs-1 text-primary"><i class="bi bi-car-front-fill"></i></div>
+                <h5 class="fw-bold">Parking</h5>
+                <p class="text-muted small mb-0">Ample parking space for visitors.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="card h-100 border-0 shadow rounded-4 text-center">
+              <div class="card-body p-4">
+                <div class="mb-3 fs-1 text-primary"><i class="bi bi-person-fill"></i></div>
+                <h5 class="fw-bold">Changing Rooms</h5>
+                <p class="text-muted small mb-0">Comfortable changing rooms for players.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="card h-100 border-0 shadow rounded-4 text-center">
+              <div class="card-body p-4">
+                <div class="mb-3 fs-1 text-primary"><i class="bi bi-tree-fill"></i></div>
+                <h5 class="fw-bold">Natural Turf</h5>
+                <p class="text-muted small mb-0">High-quality natural grass turf for matches.</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      <div class="col-6 col-md-3">
-        <div class="card h-100 border-0 shadow rounded-4 text-center">
-          <div class="card-body p-4">
-            <div class="mb-3 fs-1 text-primary">
-              <i class="bi bi-car-front-fill"></i>
-            </div>
-            <h5 class="fw-bold">Parking</h5>
-            <p class="text-muted small mb-0">Ample parking space for visitors.</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-6 col-md-3">
-        <div class="card h-100 border-0 shadow rounded-4 text-center">
-          <div class="card-body p-4">
-            <div class="mb-3 fs-1 text-primary">
-              <i class="bi bi-person-fill"></i>
-            </div>
-            <h5 class="fw-bold">Changing Rooms</h5>
-            <p class="text-muted small mb-0">Comfortable changing rooms for players.</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-6 col-md-3">
-        <div class="card h-100 border-0 shadow rounded-4 text-center">
-          <div class="card-body p-4">
-            <div class="mb-3 fs-1 text-primary">
-              <i class="bi bi-tree-fill"></i>
-            </div>
-            <h5 class="fw-bold">Natural Turf</h5>
-            <p class="text-muted small mb-0">High-quality natural grass turf for matches.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+    </section>
 
-
-    <!-- Gallery (add id) -->
+    <!-- Gallery -->
     <section id="gallery" class="pt-5">
       <h2 class="h4">Gallery</h2>
-      <p class="text-muted"></p>
       <div class="row g-3">
-        <!-- sample thumbs -->
         <div class="col-6 col-md-4 col-lg-3"><div class="gallery-thumb"><img src="assets/img/myturf.jpg" alt=""></div></div>
         <div class="col-6 col-md-4 col-lg-3"><div class="gallery-thumb"><img src="assets/img/turff.jpg" alt=""></div></div>
         <div class="col-6 col-md-4 col-lg-3"><div class="gallery-thumb"><img src="assets/img/download (1).jpg" alt=""></div></div>
         <div class="col-6 col-md-4 col-lg-3"><div class="gallery-thumb"><img src="assets/img/turffff.jpg" alt=""></div></div>
-
-        <!-- <div class="col-12 col-md-6">
-          <div class="gallery-thumb">
-            <video src="assets/media/WhatsApp Video 2025-09-29 at 6.28.52 PM.mp4" controls preload="metadata" poster="assets/img/video-cover1.jpg" autoplay muted loop playsinline></video>
-          </div>
-        </div>
-        <div class="col-12 col-md-6">
-          <div class="gallery-thumb">
-            <video src="assets/media/WhatsApp Video 2025-09-29 at 6.28.49 PM.mp4" controls preload="metadata" poster="assets/img/video-cover2.jpg" autoplay muted loop playsinline></video>
-          </div>
-        </div> -->
       </div>
     </section>
 
@@ -186,7 +179,6 @@
           <div>
             <h5 class="mb-1">Admin Support</h5>
             <p class="text-muted mb-2">Reach us for approvals, issues, or feedback.</p>
-            <!-- Replace with real info -->
             <div class="d-flex flex-column">
               <a href="tel:+911234567890" class="link-dark text-decoration-none">📞 +91 12345 67890</a>
               <a href="mailto:admin@turfbook.com" class="link-dark text-decoration-none">✉️ admin@turfbook.com</a>
