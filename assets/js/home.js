@@ -6,11 +6,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // build dependent dropdowns from DATA
   populateStates();
-  populateCities("");   // all cities initially
-  populateAreas("", ""); // all areas initially
+  populateCities("");     // all cities initially
+  populateAreas("", "");  // all areas initially
 
   await loadTurfs();
 
+  // Buttons
   qs("#btnSearch")?.addEventListener("click", ()=>loadTurfs());
   qs("#btnReset")?.addEventListener("click", ()=>{
     qsa("select, input").forEach(el=>el.value="");
@@ -18,24 +19,42 @@ document.addEventListener("DOMContentLoaded", async () => {
     populateAreas("", "");
     loadTurfs();
   });
+
+  // Sort dropdown
   qs("#sortBy")?.addEventListener("change", ()=>loadTurfs());
 
-  // Cascading filters
+  // Cascading filters + auto-apply
   qs("#fltState")?.addEventListener("change", () => {
     const st = qs("#fltState").value;
     populateCities(st);
-    // reset area when state changes
-    qs("#fltArea").value = "";
+    qs("#fltCity").value = "";
     populateAreas(st, "");
+    qs("#fltArea").value = "";
+    loadTurfs();                 // auto filter on state change
   });
 
   qs("#fltCity")?.addEventListener("change", () => {
     const st = qs("#fltState").value;
     const ct = qs("#fltCity").value;
     populateAreas(st, ct);
+    qs("#fltArea").value = "";
+    loadTurfs();                 // auto filter on city change
   });
 
-  // ✅ Press Enter in any filter → click Search
+  qs("#fltArea")?.addEventListener("change", () => {
+    loadTurfs();                 // auto filter on area change
+  });
+
+  // ✅ Auto-apply for Search, Rating, Price
+  const debounce = window.debounce || ((fn, wait=300)=>{
+    let t; return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn.apply(null,args), wait); };
+  });
+
+  qs("#txtSearch")?.addEventListener("input", debounce(()=>loadTurfs(), 300)); // live search
+  qs("#fltRating")?.addEventListener("change", ()=>loadTurfs());
+  qs("#fltPrice")?.addEventListener("change", ()=>loadTurfs());
+
+  // Press Enter in any filter → click Search (kept)
   const enterToSearch = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -49,7 +68,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 /* ========= GLOBAL (mock until API) ========= */
 let DATA = []; // filled from demoTurfs() for now
 
-/* ========= GEO HELPERS (build from DATA) ========= */
+/* ========= GEO HELPERS ========= */
 function uniqSorted(arr){ return [...new Set(arr)].filter(Boolean).sort((a,b)=>a.localeCompare(b)); }
 
 function getStates(){
@@ -145,8 +164,7 @@ async function loadTurfs(){
   const ratingF  = parseFloat(qs("#fltRating")?.value || "0");
   const sortBy   = qs("#sortBy")?.value || "relevance";
 
-  // Replace with API call when ready:
-  // let rows = await api(`/turfs?...`);
+  // Replace with API when ready:
   let rows = DATA.slice();
 
   // FILTERS
@@ -211,7 +229,7 @@ async function loadTurfs(){
   }).join("");
 }
 
-/* ------- MOCK DATA (keep in sync with your options) ------- */
+/* ------- MOCK DATA ------- */
 function demoTurfs(){
   return [
     {id:1,name:"Green Field Arena",state:"Maharashtra",city:"Mumbai",area:"Andheri",price:800,rating:4.6,facilities:["Parking","Floodlights"],photo:"assets/img/myturf.jpg"},
@@ -221,6 +239,7 @@ function demoTurfs(){
     {id:5,name:"Urban Kick-Off",state:"Karnataka",city:"Bengaluru",area:"Koramangala",price:950,rating:4.5,facilities:["Parking","Washroom"],photo:"assets/img/turf5.jpg"}
   ];
 }
+
 
 
 
