@@ -1,9 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Register Owner • TurfBook</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+    .password-toggle {
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body class="bg-light">
   <div id="navbar"></div>
@@ -28,17 +35,40 @@
             </div>
             <div class="col-12 col-md-6">
               <label class="form-label">Password</label>
-              <input id="password" type="password" class="form-control" required>
+              <div class="input-group">
+                <input id="password" type="password" class="form-control" required>
+                <span id="togglePassword" class="input-group-text password-toggle">
+                  <i class="fa fa-eye"></i>
+                </span>
+              </div>
             </div>
 
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-md-6">
+              <label class="form-label">Confirm Password</label>
+              <div class="input-group">
+                <input id="confirmPassword" type="password" class="form-control" required>
+                <span id="toggleConfirmPassword" class="input-group-text password-toggle">
+                  <i class="fa fa-eye"></i>
+                </span>
+              </div>
+            </div>
+
+            <div class="col-12">
               <label class="form-label">State</label>
-              <input id="state" class="form-control" required>
+              <select id="state" class="form-select" required>
+                <option value="">Select State</option>
+                <!-- Dynamically populated -->
+              </select>
             </div>
-            <div class="col-12 col-md-4">
+
+            <div class="col-12">
               <label class="form-label">City</label>
-              <input id="city" class="form-control" required>
+              <select id="city" class="form-select" required>
+                <option value="">Select City</option>
+                <!-- Dynamically populated -->
+              </select>
             </div>
+
             <div class="col-12 col-md-4">
               <label class="form-label">Area</label>
               <input id="area" class="form-control" required>
@@ -71,16 +101,105 @@
   <script src="assets/js/auth.js"></script>
   <script src="assets/js/layout.js"></script>
   <script>
-    document.getElementById("registerForm").addEventListener("submit", async (e)=>{
-      e.preventDefault();
-      const payload = {
-        name: name.value.trim(), phone: phone.value.trim(), email: email.value.trim(),
-        password: password.value.trim(), state: state.value.trim(), city: city.value.trim(),
-        area: area.value.trim(), address: address.value.trim(), mapUrl: mapUrl.value.trim()
-      };
-      const r = await registerUser(payload, "owner");
-      if (r?.success) location.href = "login.html"; else alert(r?.message || "Registration failed");
+    // Mapping of states and cities in India
+    const stateCityMap = {
+      "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Aurangabad", "Nashik", "Solapur"],
+      "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Bhavnagar"],
+      "Karnataka": ["Bengaluru", "Mysuru", "Mangaluru", "Hubballi", "Belagavi"],
+      "Uttar Pradesh": ["Lucknow", "Kanpur", "Agra", "Varanasi", "Meerut"],
+      "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Salem", "Tirunelveli"],
+      "West Bengal": ["Kolkata", "Howrah", "Siliguri", "Durgapur", "Asansol"],
+      "Delhi": ["Delhi"],
+      "Rajasthan": ["Jaipur", "Udaipur", "Jodhpur", "Ajmer", "Bikaner"],
+      "Bihar": ["Patna", "Gaya", "Bhagalpur", "Muzaffarpur"],
+      "Punjab": ["Chandigarh", "Amritsar", "Jalandhar", "Ludhiana", "Patiala"],
+      "Haryana": ["Gurugram", "Faridabad", "Ambala", "Karnal"],
+      "Madhya Pradesh": ["Bhopal", "Indore", "Gwalior", "Jabalpur", "Ujjain"],
+      // Add more states and cities as needed
+    };
+
+    // Function to populate states dropdown
+    function populateStates() {
+      const stateSelect = document.getElementById("state");
+      const stateOptions = Object.keys(stateCityMap).map(state => `<option value="${state}">${state}</option>`).join("");
+      stateSelect.innerHTML = `<option value="">Select State</option>${stateOptions}`;
+    }
+
+    // Function to populate cities dropdown based on selected state
+    function populateCities(state) {
+      const citySelect = document.getElementById("city");
+      citySelect.innerHTML = ''; // Clear previous cities
+
+      if (state && stateCityMap[state]) {
+        const cities = stateCityMap[state].sort(); // Sort cities alphabetically
+        cities.forEach(city => {
+          const option = document.createElement("option");
+          option.value = city;
+          option.textContent = city;
+          citySelect.appendChild(option);
+        });
+      }
+    }
+
+    // Event listener for state change
+    document.getElementById("state").addEventListener("change", (e) => {
+      const selectedState = e.target.value;
+      populateCities(selectedState); // Update cities based on selected state
     });
+
+    // Toggle password visibility
+    const togglePasswordVisibility = (inputId, toggleId) => {
+      const passwordField = document.getElementById(inputId);
+      const toggleButton = document.getElementById(toggleId);
+      
+      toggleButton.addEventListener('click', () => {
+        const type = passwordField.type === 'password' ? 'text' : 'password';
+        passwordField.type = type;
+        toggleButton.querySelector('i').classList.toggle('fa-eye-slash'); // Toggle eye icon
+        toggleButton.querySelector('i').classList.toggle('fa-eye'); // Toggle eye icon
+      });
+    };
+
+    // Call the togglePasswordVisibility function for both password fields
+    togglePasswordVisibility('password', 'togglePassword');
+    togglePasswordVisibility('confirmPassword', 'toggleConfirmPassword');
+
+    // Register form submission
+    document.getElementById("registerForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      // Validate if passwords match
+      const password = document.getElementById('password').value.trim();
+      const confirmPassword = document.getElementById('confirmPassword').value.trim();
+
+      if (password !== confirmPassword) {
+        alert("Passwords do not match!");
+        return;
+      }
+
+      const payload = {
+        name: document.getElementById('name').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        password: password,  // Use the password here
+        state: document.getElementById('state').value.trim(),
+        city: document.getElementById('city').value.trim(), // Get selected city
+        area: document.getElementById('area').value.trim(),
+        address: document.getElementById('address').value.trim(),
+        mapUrl: document.getElementById('mapUrl').value.trim()
+      };
+
+      // Mock API call for registration
+      const r = await registerUser(payload, "owner");
+      if (r?.success) {
+        location.href = "login.html"; // Redirect to login after registration
+      } else {
+        alert(r?.message || "Registration failed");
+      }
+    });
+
+    // Initialize state dropdown
+    populateStates();
   </script>
 </body>
 </html>
