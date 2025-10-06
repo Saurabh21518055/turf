@@ -96,6 +96,24 @@
 
   <div id="footer"></div>
 
+  <!-- Modal -->
+  <div class="modal" tabindex="-1" id="confirmationModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Registration Successful</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Your profile will be verified by Admin before access.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="okButton">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="assets/js/app.js"></script>
   <script src="assets/js/auth.js"></script>
@@ -190,12 +208,17 @@
       };
 
       // Mock API call for registration
-      const r = await registerUser(payload, "owner");
-      if (r?.success) {
-        location.href = "login.html"; // Redirect to login after registration
-      } else {
-        alert(r?.message || "Registration failed");
-      }
+      //const r = await registerUser(payload, "owner"); 
+      const r = { success: true };  // Mock response
+      
+      // Show the modal popup after successful registration
+      const modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+      modal.show();
+
+      // Redirect to index.html after clicking OK on the modal
+      document.getElementById("okButton").addEventListener("click", () => {
+        location.href = "index.html"; // Redirect to homepage
+      });
     });
 
     // Initialize state dropdown
