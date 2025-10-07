@@ -55,16 +55,20 @@
       </span>
     </div>
   </div>
+  <div class="col-6 col-md-6">
+              <label class="form-label">Turf Name</label>
+              <input id="turfName" class="form-control" required>
+            </div>
+
+            <div class="col-6">
+              <label class="form-label">Upload Turf Image</label>
+              <input id="turfImages" type="file" class="form-control" accept="image/*" multiple required>
+              <small class="text-muted">You can upload only 1 image up to 5 MB.</small>
+            </div>
 </div>
 
 
             
-
-            <div class="col-12">
-              <label class="form-label">Upload Turf Image</label>
-              <input id="turfImages" type="file" class="form-control" accept="image/*" multiple required>
-              <small class="text-muted">You can upload only 1 image. Max size per image: 5 MB.</small>
-            </div>
 
             <div class="col-4">
               <label class="form-label">State</label>
@@ -127,10 +131,20 @@
   <script>
     // State → City mapping
     const stateCityMap = {
-      "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Aurangabad", "Nashik", "Solapur"],
+      "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Aurangabad", "Nashik", "Solapur","Kolhapur","jalgaon","Dhule","Palghar","Thane",
+      "Ahamednagar","Amravati","Latur","Satara","Sangli","Beed","Chandrapur","Yavatmal","Jalna","Nanded","Parbhani","Dharashiv"],
       "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Bhavnagar"],
-      "Karnataka": ["Bengaluru", "Mysuru", "Mangaluru", "Hubballi", "Belagavi"]
-      // Add more states/cities as needed
+      "Karnataka": ["Bengaluru", "Mysuru", "Mangaluru", "Hubballi", "Belagavi"],
+      "Uttar Pradesh": ["Lucknow", "Kanpur", "Agra", "Varanasi", "Meerut"],
+      "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Salem", "Tirunelveli"],
+      "West Bengal": ["Kolkata", "Howrah", "Siliguri", "Durgapur", "Asansol"],
+      "Delhi": ["Delhi"],
+      "Rajasthan": ["Jaipur", "Udaipur", "Jodhpur", "Ajmer", "Bikaner"],
+      "Bihar": ["Patna", "Gaya", "Bhagalpur", "Muzaffarpur"],
+      "Punjab": ["Chandigarh", "Amritsar", "Jalandhar", "Ludhiana", "Patiala"],
+      "Haryana": ["Gurugram", "Faridabad", "Ambala", "Karnal"],
+      "Madhya Pradesh": ["Bhopal", "Indore", "Gwalior", "Jabalpur", "Ujjain"],
+      // Add more states and cities as needed
     };
 
     function populateStates() {
