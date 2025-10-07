@@ -34,8 +34,8 @@ document.addEventListener("DOMContentLoaded", async ()=>{
 
     // turfs
     const turfs = [
-      {id:1,name:"Green Field Arena",price:800,photo:"assets/img/gallery1.jpg"},
-      {id:2,name:"City Sports Turf",price:700,photo:"assets/img/gallery2.jpg"}
+      {id:1,name:"Green Field Arena",price:800,photo:"assets/img/myturf.jpg"},
+      {id:2,name:"City Sports Turf",price:700,photo:"assets/img/turff.jpg"}
     ];
     qs("#turfs").innerHTML = turfs.map(t=>`
       <div class="col">
