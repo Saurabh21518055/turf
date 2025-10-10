@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Booked Slots • TurfBook</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .slot-btn {
+      border: 1px solid #007bff;
+      color: #007bff;
+      background: #fff;
+      border-radius: 6px;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.9rem;
+      cursor: default;
+      transition: all 0.2s ease;
+    }
+    .slot-btn.booked {
+      background: #ffebee; /* red background for booked */
+      border-color: #dc3545;
+      color: #dc3545;
+    }
+    .slot-btn.available {
+      background: #e9f7ef; /* green background for available */
+      border-color: #198754;
+      color: #198754;
+    }
+  </style>
+</head>
+<body class="bg-light">
+
+  <div id="navbar"></div>
+
+  <main class="container py-4">
+    <h1 class="h4 mb-3">Slot Availability Calendar</h1>
+
+    <div class="row g-4">
+      <div class="col-12 col-lg-7">
+        <div class="card">
+          <div class="card-body">
+            <div class="row g-3">
+              <div class="col-12 col-md-6">
+                <label class="form-label">Select Date</label>
+                <input type="date" id="slotDate" class="form-control">
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="form-label">Duration</label>
+                <select id="duration" class="form-select">
+                  <option value="60">1 Hour</option>
+                </select>
+              </div>
+            </div>
+
+            <hr>
+
+            <!-- Color legend -->
+            <label class="form-label d-flex justify-content-between align-items-center">
+              <span>Available Time Slots</span>
+              <div class="d-flex align-items-center gap-3 small">
+                <!-- <div class="d-flex align-items-center gap-1">
+                  <span class="badge" style="background-color:#e9f7ef;border:1px solid #198754;width:18px;height:12px;"></span>
+                  <span>Available</span>
+                </div>
+                <div class="d-flex align-items-center gap-1">
+                  <span class="badge" style="background-color:#ffebee;border:1px solid #dc3545;width:18px;height:12px;"></span>
+                  <span>Booked</span>
+                </div> -->
+              </div>
+            </label>
+
+            <div id="slots" class="d-flex flex-wrap gap-2 mt-2">
+              <div class="text-muted">Loading slots...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="col-12 col-lg-5">
+        <div class="card">
+          <div class="card-body">
+            <h2 class="h6 text-muted">Summary</h2>
+            <ul class="list-unstyled small mb-3">
+              <li><strong>Turf:</strong> <span id="sumTurf">Green Field Arena</span></li>
+              <li><strong>Date:</strong> <span id="sumDate">—</span></li>
+              <li><strong>Booked Slots:</strong> <span id="sumBooked">—</span></li>
+              <li><strong>Available Slots:</strong> <span id="sumAvailable">—</span></li>
+            </ul>
+            <div class="text-muted small">Note: Red slots are already booked; green slots are available.</div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <div id="footer"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/guards.js"></script>
+  <script>requireAuth(['owner']);</script>
+  <script src="assets/js/layout.js"></script>
+
+  <script>
+    const allSlots = [
+      "6:00 AM–7:00 AM", "7:00 AM–8:00 AM", "8:00 AM–9:00 AM", "9:00 AM–10:00 AM",
+      "10:00 AM–11:00 AM", "11:00 AM–12:00 PM", "12:00 PM–1:00 PM", "1:00 PM–2:00 PM",
+      "2:00 PM–3:00 PM", "3:00 PM–4:00 PM", "4:00 PM–5:00 PM", "5:00 PM–6:00 PM",
+      "6:00 PM–7:00 PM", "7:00 PM–8:00 PM", "8:00 PM–9:00 PM", "9:00 PM–10:00 PM",
+      "10:00 PM–11:00 PM", "11:00 PM–12:00 AM (next day)", "12:00 AM–1:00 AM (next day)", "1:00 AM–2:00 AM (next day)"
+    ];
+
+    function loadSlotsForDate(selectedDate) {
+      const bookedSlots = ["8:00 AM–9:00 AM", "5:00 PM–6:00 PM", "9:00 PM–10:00 PM"]; // demo data
+      const slotsContainer = document.getElementById('slots');
+      slotsContainer.innerHTML = "";
+
+      allSlots.forEach(slot => {
+        const btn = document.createElement("div");
+        btn.className = "slot-btn " + (bookedSlots.includes(slot) ? "booked" : "available");
+        btn.textContent = slot;
+        btn.title = bookedSlots.includes(slot)
+          ? "Already booked"
+          : "Available for booking";
+        slotsContainer.appendChild(btn);
+      });
+
+      document.getElementById("sumDate").textContent = selectedDate;
+      document.getElementById("sumBooked").textContent = bookedSlots.length;
+      document.getElementById("sumAvailable").textContent = allSlots.length - bookedSlots.length;
+    }
+
+    // Initialize with today’s date
+    document.addEventListener("DOMContentLoaded", () => {
+      const today = new Date().toISOString().split("T")[0];
+      const dateInput = document.getElementById("slotDate");
+      dateInput.value = today;
+      loadSlotsForDate(today);
+
+      dateInput.addEventListener("change", function() {
+        loadSlotsForDate(this.value);
+      });
+    });
+  </script>
+
+</body>
+</html>
