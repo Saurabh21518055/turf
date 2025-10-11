@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -21,7 +21,6 @@
     <div class="d-flex justify-content-between align-items-center mt-4">
   <h2 class="h5 m-0">My Turfs</h2>
   <div>
-    <!-- Add margin between the buttons -->
    <a class="btn btn-sm btn-primary me-2" href="owner-turf-edit.html">Edit Turf</a>
     <a class="btn btn-sm btn-primary me-2" href="owner-turf-add.html">Add Turf</a>
     <a class="btn btn-sm btn-primary" href="owner-slot-booking.html">Slot Booking</a>
@@ -49,5 +48,148 @@
   <script>requireAuth(['owner']);</script>
   <script src="assets/js/layout.js"></script>
   <script src="assets/js/owner.js"></script>
+</body>
+</html> -->
+
+<!-- ------------------- -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Owner Dashboard • TurfBook</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/css/custom.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+  <!-- Navbar -->
+  <div id="navbar"></div>
+
+  <div class="container-fluid">
+    <div class="row">
+
+      <!-- Left Sidebar: Turf Selection -->
+      <nav class="col-md-2 col-lg-2 d-md-block bg-light sidebar collapse p-3 border-end">
+        <h5 class="mt-3">Select Turf(s)</h5>
+        <div id="ownerTurfList" class="form-check d-flex flex-column gap-2">
+          <!-- Turf radios injected dynamically -->
+        </div>
+      </nav>
+
+      <!-- Main Dashboard Content -->
+      <main class="col-md-10 col-lg-10 ms-sm-auto px-md-4 py-4">
+        <h1 class="h4 mt-3">Dashboard</h1>
+
+        <!-- KPI Cards -->
+        <div class="row g-3">
+          <div class="col-6 col-lg-3">
+            <div class="card"><div class="card-body"><div class="text-muted small">Total Revenue</div><div class="fs-5">₹<span id="revTotal">0</span></div></div></div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="card"><div class="card-body"><div class="text-muted small">Bookings</div><div class="fs-5"><span id="countBookings">0</span></div></div></div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="card"><div class="card-body"><div class="text-muted small">Active Turfs</div><div class="fs-5"><span id="countTurfs">0</span></div></div></div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="card"><div class="card-body"><div class="text-muted small">This Month</div><div class="fs-5">₹<span id="revMonth">0</span></div></div></div>
+          </div>
+        </div>
+
+        <!-- Turf Action Buttons -->
+        <div class="d-flex justify-content-start align-items-center mt-4 gap-2">
+          <a class="btn btn-sm btn-primary" href="owner-turf-edit.html">Edit Turf</a>
+          <a class="btn btn-sm btn-primary" href="owner-turf-add.html">Add Turf</a>
+          <a class="btn btn-sm btn-primary" href="owner-slot-booking.html">Slot Booking</a>
+        </div>
+
+        <!-- Recent Bookings -->
+        <h2 class="h5 mt-4">Recent Bookings</h2>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>Booking</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="bookingsRows">
+              <tr><td colspan="5" class="text-center text-muted">Select a turf to view bookings</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div id="footer"></div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/guards.js"></script>
+  <script>requireAuth(['owner']);</script>
+  <script src="assets/js/layout.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Mock owner turfs
+      const turfs = [
+        {id:1,name:"Green Field Arena"},
+        {id:2,name:"City Sports Turf"},
+        {id:3,name:"Sunrise Arena"}
+      ];
+
+      // Mock bookings
+      const bookings = [
+        {id:"BK1A2B3", turfId:1, date:"2025-10-01", time:"18:00-19:00", amount:800, status:"CONFIRMED"},
+        {id:"BK1A2B4", turfId:1, date:"2025-10-02", time:"19:00-20:00", amount:800, status:"CONFIRMED"},
+        {id:"BK9Z8Y7", turfId:2, date:"2025-09-20", time:"10:00-11:00", amount:700, status:"COMPLETED"}
+      ];
+
+      const ownerTurfList = document.getElementById("ownerTurfList");
+      const tbody = document.getElementById("bookingsRows");
+
+      // Inject turf radio buttons (select only one)
+      turfs.forEach(t => {
+        const div = document.createElement("div");
+        div.className = "form-check";
+        div.innerHTML = `<input class="form-check-input" type="radio" name="turfSelect" value="${t.id}" id="turf${t.id}">
+                         <label class="form-check-label" for="turf${t.id}">${t.name}</label>`;
+        ownerTurfList.appendChild(div);
+      });
+
+      function renderBookings(turfId) {
+        const filtered = bookings.filter(b => b.turfId === turfId);
+        if (!filtered.length) {
+          tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">No bookings for this turf</td></tr>`;
+          return;
+        }
+        tbody.innerHTML = filtered.map(b => `
+          <tr>
+            <td>${b.id}</td>
+            <td>${b.date}</td>
+            <td>${b.time}</td>
+            <td>₹${b.amount}</td>
+            <td><span class="badge ${b.status==="CONFIRMED"?"text-bg-success":"text-bg-secondary"}">${b.status}</span></td>
+          </tr>
+        `).join("");
+      }
+
+      // Update bookings when turf radio changes
+      ownerTurfList.addEventListener("change", (e) => {
+        const selectedId = Number(e.target.value);
+        renderBookings(selectedId);
+      });
+    });
+  </script>
+
 </body>
 </html>
