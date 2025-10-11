@@ -54,6 +54,8 @@
 //     foot.innerHTML = html;
 //   }
 // })();
+
+///-----
 (async function initLayout() {
   const nav = qs("#navbar");
   if (nav) {
@@ -64,42 +66,35 @@
     const role = getRole();
     const logged = !!getToken();
 
-    // Customize navbar for admin
+    // Get logo / brand element
+    const brand = nav.querySelector(".navbar-brand");
+    if (brand) {
+      // Remove default href and make clickable to refresh
+      brand.removeAttribute("href");
+      brand.style.cursor = "pointer";
+      brand.addEventListener("click", () => location.reload());
+    }
+
     if (role === "admin") {
       // Remove left side links
       const leftNav = nav.querySelector(".navbar-nav.me-auto");
       if (leftNav) leftNav.innerHTML = "";
-
-      // Keep logo + TurfBook name but remove click
-      const brand = nav.querySelector(".navbar-brand");
-      if (brand) {
-        brand.removeAttribute("href");
-        brand.style.cursor = "default";
-      }
 
       // Right side: Dashboard, Owners, Logout
       right.innerHTML = `
         <li class="nav-item"><a class="nav-link" href="admin-dashboard.html">Dashboard</a></li>
         <li class="nav-item"><a class="nav-link" href="admin-owners.html">Owners</a></li>
         <li class="nav-item"><button class="btn btn-outline-danger ms-2" onclick="logout()">Logout</button></li>`;
-    }
-    else if (role === "owner") {
-      // Owner: only logo + Logout
+    } else if (role === "owner") {
+      // Owner: only Logout
       const leftNav = nav.querySelector(".navbar-nav.me-auto");
       if (leftNav) leftNav.innerHTML = "";
-
-      const brand = nav.querySelector(".navbar-brand");
-      if (brand) {
-        brand.removeAttribute("href");
-        brand.style.cursor = "default";
-      }
 
       right.innerHTML = `
         <li class="nav-item">
           <button class="btn btn-outline-danger ms-2" onclick="logout()">Logout</button>
         </li>`;
-    }
-    else if (!logged) {
+    } else if (!logged) {
       // Guest links
       right.innerHTML = `
         <li class="nav-item dropdown">
