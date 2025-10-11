@@ -61,7 +61,6 @@
         <li class="nav-item"><a class="nav-link" href="admin-login.html">Admin</a></li>`;
     } else if(role==="owner"){
       right.innerHTML = `
-        <li class="nav-item"><a class="nav-link" href="owner-dashboard.html">Owner Dashboard</a></li>
         <li class="nav-item"><button class="btn btn-outline-danger ms-2" onclick="logout()">Logout</button></li>`;
     } else if(role==="admin"){
       right.innerHTML = `
