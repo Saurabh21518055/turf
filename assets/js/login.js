@@ -16,9 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
       localStorage.setItem('auth_token', 'demo-cust-token'); // Mock token
       localStorage.setItem('auth_role', 'customer'); // Mock role
 
-      // Retrieve the redirect URL from localStorage and redirect the user
-      const redirectAfterLogin = localStorage.getItem("redirectAfterLogin") || "index.html"; 
-      location.href = redirectAfterLogin; // Redirect back to the desired page (e.g., book-turf.html)
+      // Redirect **always** to book-slot.html
+      location.href = "book-slot.html";
     } else {
       alert("Please enter a valid email and password.");
     }
