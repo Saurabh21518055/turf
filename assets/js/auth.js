@@ -54,7 +54,7 @@ function initLoginPage() {
     setUser({ email, role, name });
 
     if (role === "customer") {
-      location.href = "index.html"; // redirect to home page
+      location.href = "book-slot.html"; // redirect to home page
     } else if (role === "owner") {
       location.href = "owner-dashboard.html";
     } else if (role === "admin") {
