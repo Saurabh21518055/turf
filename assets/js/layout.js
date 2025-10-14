@@ -1,4 +1,6 @@
 
+
+//---
 // (async function initLayout() {
 //   const nav = qs("#navbar");
 //   if (nav) {
@@ -9,23 +11,36 @@
 //     const role = getRole();
 //     const logged = !!getToken();
 
-//     if (role === "owner") {
-//       // Left links removed
+//     // Get logo / brand element
+//     const brand = nav.querySelector(".navbar-brand");
+//     if (brand) {
+//       brand.style.cursor = "pointer";
+
+//       // Guest (not logged in)
+//       if (!logged) {
+//         brand.addEventListener("click", () => location.href = "index.html");
+//       } else {
+//         // Logged-in users: refresh page
+//         brand.addEventListener("click", () => location.reload());
+//       }
+//       // Remove href for guests or logged-in users
+//       brand.removeAttribute("href");
+//     }
+
+//     if (role === "admin") {
+//       const leftNav = nav.querySelector(".navbar-nav.me-auto");
+//       if (leftNav) leftNav.innerHTML = ""; // remove left links
+
+//       right.innerHTML = `
+//         <li class="nav-item"><a class="nav-link" href="admin-dashboard.html">Dashboard</a></li>
+//         <li class="nav-item"><a class="nav-link" href="admin-owners.html">Owners</a></li>
+//         <li class="nav-item"><button class="btn btn-outline-danger ms-2" onclick="logout()">Logout</button></li>`;
+//     } else if (role === "owner") {
 //       const leftNav = nav.querySelector(".navbar-nav.me-auto");
 //       if (leftNav) leftNav.innerHTML = "";
 
-//       // Keep logo + name, but remove link functionality
-//       const brand = nav.querySelector(".navbar-brand");
-//       if (brand) {
-//         brand.removeAttribute("href");          // remove click
-//         brand.style.cursor = "default";         // optional: cursor not pointer
-//       }
-
-//       // Right side: only Logout
 //       right.innerHTML = `
-//         <li class="nav-item">
-//           <button class="btn btn-outline-danger ms-2" onclick="logout()">Logout</button>
-//         </li>`;
+//         <li class="nav-item"><button class="btn btn-outline-danger ms-2" onclick="logout()">Logout</button></li>`;
 //     } else if (!logged) {
 //       right.innerHTML = `
 //         <li class="nav-item dropdown">
@@ -37,10 +52,6 @@
 //         </li>
 //         <li class="nav-item"><a class="nav-link" href="login.html">Login</a></li>
 //         <li class="nav-item"><a class="nav-link" href="admin-login.html">Admin</a></li>`;
-//     } else if (role === "admin") {
-//       right.innerHTML = `
-//         <li class="nav-item"><a class="nav-link" href="admin-dashboard.html">Dashboard</a></li>
-//         <li class="nav-item"><button class="btn btn-outline-danger ms-2" onclick="logout()">Logout</button></li>`;
 //     } else {
 //       right.innerHTML = `
 //         <li class="nav-item"><a class="nav-link" href="customer-history.html">My Bookings</a></li>
@@ -55,7 +66,7 @@
 //   }
 // })();
 
-///-----
+//--
 (async function initLayout() {
   const nav = qs("#navbar");
   if (nav) {
@@ -66,36 +77,35 @@
     const role = getRole();
     const logged = !!getToken();
 
-    // Get logo / brand element
+    // Logo / TurfBook brand
     const brand = nav.querySelector(".navbar-brand");
     if (brand) {
-      // Remove default href and make clickable to refresh
-      brand.removeAttribute("href");
+      brand.removeAttribute("href");      // remove default link
       brand.style.cursor = "pointer";
-      brand.addEventListener("click", () => location.reload());
+
+      if (role === "customer" || !logged) {
+        // Customer or guest: redirect to index
+        brand.addEventListener("click", () => location.href = "index.html");
+      } else {
+        // Owner or admin: just refresh page
+        brand.addEventListener("click", () => location.reload());
+      }
     }
 
+    // Navbar right links
     if (role === "admin") {
-      // Remove left side links
       const leftNav = nav.querySelector(".navbar-nav.me-auto");
-      if (leftNav) leftNav.innerHTML = "";
-
-      // Right side: Dashboard, Owners, Logout
+      if (leftNav) leftNav.innerHTML = ""; // remove left links
       right.innerHTML = `
         <li class="nav-item"><a class="nav-link" href="admin-dashboard.html">Dashboard</a></li>
         <li class="nav-item"><a class="nav-link" href="admin-owners.html">Owners</a></li>
         <li class="nav-item"><button class="btn btn-outline-danger ms-2" onclick="logout()">Logout</button></li>`;
     } else if (role === "owner") {
-      // Owner: only Logout
       const leftNav = nav.querySelector(".navbar-nav.me-auto");
       if (leftNav) leftNav.innerHTML = "";
-
       right.innerHTML = `
-        <li class="nav-item">
-          <button class="btn btn-outline-danger ms-2" onclick="logout()">Logout</button>
-        </li>`;
+        <li class="nav-item"><button class="btn btn-outline-danger ms-2" onclick="logout()">Logout</button></li>`;
     } else if (!logged) {
-      // Guest links
       right.innerHTML = `
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Register</a>
@@ -107,13 +117,13 @@
         <li class="nav-item"><a class="nav-link" href="login.html">Login</a></li>
         <li class="nav-item"><a class="nav-link" href="admin-login.html">Admin</a></li>`;
     } else {
-      // Customer links
       right.innerHTML = `
         <li class="nav-item"><a class="nav-link" href="customer-history.html">My Bookings</a></li>
         <li class="nav-item"><button class="btn btn-outline-danger ms-2" onclick="logout()">Logout</button></li>`;
     }
   }
 
+  // Footer
   const foot = qs("#footer");
   if (foot) {
     const html = await fetch("partials/footer.html").then(r => r.text());
