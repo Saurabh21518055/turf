@@ -51,7 +51,8 @@
 </body>
 </html> -->
 
-<!-- ----------------------------------------------- -->
+<!-- ------------------- -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -98,11 +99,13 @@
         </div>
 
         <!-- Turf Action Buttons -->
-        <div class="d-flex justify-content-start align-items-center mt-4 gap-2">
-          <a class="btn btn-sm btn-primary" href="owner-turf-edit.html">Edit Turf</a>
-          <a class="btn btn-sm btn-primary" href="owner-turf-add.html">Add Turf</a>
-          <a class="btn btn-sm btn-primary" href="owner-slot-booking.html">Slot Booking</a>
-        </div>
+        <!-- Turf Action Buttons -->
+<div class="d-flex justify-content-start align-items-center mt-4 gap-2">
+  <button id="btnEditTurf" class="btn btn-sm btn-primary">Edit Turf</button>
+  <a class="btn btn-sm btn-primary" href="owner-turf-add.html">Add Turf</a>
+  <a class="btn btn-sm btn-primary" href="owner-slot-booking.html">Slot Booking</a>
+</div>
+
 
         <!-- Recent Bookings -->
         <h2 class="h5 mt-4">Recent Bookings</h2>
@@ -139,56 +142,73 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      // Mock owner turfs
-      const turfs = [
-        {id:1,name:"Green Field Arena"},
-        {id:2,name:"City Sports Turf"},
-        {id:3,name:"Sunrise Arena"}
-      ];
+  const turfs = [
+    {id:1,name:"Green Field Arena"},
+    {id:2,name:"City Sports Turf"},
+    {id:3,name:"Sunrise Arena"}
+  ];
 
-      // Mock bookings
-      const bookings = [
-        {id:"BK1A2B3", turfId:1, date:"2025-10-01", time:"18:00-19:00", amount:800, status:"CONFIRMED"},
-        {id:"BK1A2B4", turfId:1, date:"2025-10-02", time:"19:00-20:00", amount:800, status:"CONFIRMED"},
-        {id:"BK9Z8Y7", turfId:2, date:"2025-09-20", time:"10:00-11:00", amount:700, status:"COMPLETED"}
-      ];
+  const bookings = [
+    {id:"BK1A2B3", turfId:1, date:"2025-10-01", time:"18:00-19:00", amount:800, status:"CONFIRMED"},
+    {id:"BK1A2B4", turfId:2, date:"2025-10-02", time:"19:00-20:00", amount:800, status:"CONFIRMED"},
+    {id:"BK9Z8Y7", turfId:3 , date:"2025-09-20", time:"10:00-11:00", amount:700, status:"COMPLETED"}
+  ];
 
-      const ownerTurfList = document.getElementById("ownerTurfList");
-      const tbody = document.getElementById("bookingsRows");
+  const ownerTurfList = document.getElementById("ownerTurfList");
+  const tbody = document.getElementById("bookingsRows");
+  const btnEditTurf = document.getElementById("btnEditTurf");
 
-      // Inject turf radio buttons (select only one)
-      turfs.forEach(t => {
-        const div = document.createElement("div");
-        div.className = "form-check";
-        div.innerHTML = `<input class="form-check-input" type="radio" name="turfSelect" value="${t.id}" id="turf${t.id}">
-                         <label class="form-check-label" for="turf${t.id}">${t.name}</label>`;
-        ownerTurfList.appendChild(div);
-      });
+  // Inject turf radio buttons
+  turfs.forEach(t => {
+    const div = document.createElement("div");
+    div.className = "form-check";
+    div.innerHTML = `<input class="form-check-input" type="radio" name="turfSelect" value="${t.id}" id="turf${t.id}">
+                     <label class="form-check-label" for="turf${t.id}">${t.name}</label>`;
+    ownerTurfList.appendChild(div);
+  });
 
-      function renderBookings(turfId) {
-        const filtered = bookings.filter(b => b.turfId === turfId);
-        if (!filtered.length) {
-          tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">No bookings for this turf</td></tr>`;
-          return;
-        }
-        tbody.innerHTML = filtered.map(b => `
-          <tr>
-            <td>${b.id}</td>
-            <td>${b.date}</td>
-            <td>${b.time}</td>
-            <td>₹${b.amount}</td>
-            <td><span class="badge ${b.status==="CONFIRMED"?"text-bg-success":"text-bg-secondary"}">${b.status}</span></td>
-          </tr>
-        `).join("");
-      }
+  // Render bookings for selected turf
+  function renderBookings(turfId) {
+    const filtered = bookings.filter(b => b.turfId === turfId);
+    if (!filtered.length) {
+      tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">No bookings for this turf</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = filtered.map(b => `
+      <tr>
+        <td>${b.id}</td>
+        <td>${b.date}</td>
+        <td>${b.time}</td>
+        <td>₹${b.amount}</td>
+        <td><span class="badge ${b.status==="CONFIRMED"?"text-bg-success":"text-bg-secondary"}">${b.status}</span></td>
+      </tr>
+    `).join("");
+  }
 
-      // Update bookings when turf radio changes
-      ownerTurfList.addEventListener("change", (e) => {
-        const selectedId = Number(e.target.value);
-        renderBookings(selectedId);
-      });
-    });
-  </script>
+  // Update bookings when turf radio changes
+  ownerTurfList.addEventListener("change", (e) => {
+    const selectedId = Number(e.target.value);
+    renderBookings(selectedId);
+  });
+
+  // Edit Turf button logic
+ btnEditTurf.addEventListener("click", () => {
+  const selectedTurf = ownerTurfList.querySelector("input[name='turfSelect']:checked");
+  if (!selectedTurf) {
+    alert("Please select a turf to edit.");
+    return;
+  }
+
+  const turfId = selectedTurf.value;
+  const turfData = turfs.find(t => t.id == turfId);
+
+  // Send all required details as query params
+  const editUrl = `owner-turf-edit.html?tid=${turfData.id}&tname=${encodeURIComponent(turfData.name)}&price=${turfData.price}`;
+  window.location.href = editUrl;
+});
+
+});</script>
 
 </body>
 </html>
+ owner-dashobard
