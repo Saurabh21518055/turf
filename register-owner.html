@@ -55,17 +55,27 @@
       </span>
     </div>
   </div>
-  <div class="col-6 col-md-6">
+  <div class="col-4 col-md-4">
               <label class="form-label">Turf Name</label>
               <input id="turfName" class="form-control" required>
             </div>
 
-            <div class="col-6">
+            <div class="col-4">
               <label class="form-label">Upload Turf Image</label>
               <input id="turfImages" type="file" class="form-control" accept="image/*" multiple required>
-              <small class="text-muted">You can upload only 1 image up to 5 MB.</small>
+              <small class="text-muted">Upload 1 image up to 5MB.</small>
             </div>
+            <div class="col-4 col-md-4">
+  <label class="form-label">Turf Size</label>
+  <select id="turfSize" class="form-select" required>
+    <option value="">Select size</option>
+    <option value="Small">Small (5000–10000 sq.ft)</option>
+    <option value="Medium">Medium (10000–15000 sq.ft)</option>
+    <option value="Large">Large (15000–20000 sq.ft)</option>
+  </select>
 </div>
+</div>
+
 
 
             
