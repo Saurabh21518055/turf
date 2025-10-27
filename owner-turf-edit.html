@@ -1,5 +1,3 @@
-
-<!-- turf-edit.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,42 +15,96 @@
       <div class="card-body">
         <form id="turfForm">
           <div class="row g-3">
+            
+            <!-- Turf Name -->
             <div class="col-12 col-md-8">
               <label class="form-label">Turf Name</label>
               <input id="name" class="form-control" required>
             </div>
+
+            <!-- Base Price -->
             <div class="col-6 col-md-4">
-              <label class="form-label">Price / hour (₹)</label>
+              <label class="form-label">Base Price / hour (₹)</label>
               <input id="price" type="number" class="form-control" required>
             </div>
 
-            <!-- Turf Size Radio Buttons -->
-            <!-- Turf Size Dropdown -->
-<div class="col-12 col-md-6">
-  <label class="form-label">Turf Size</label>
-  <select id="turfSize" class="form-select" required>
-    <option value="">Select size</option>
-    <option value="Small">Small (5000–10000 sq.ft)</option>
-    <option value="Medium">Medium (10000–15000 sq.ft)</option>
-    <option value="Large">Large (15000–20000 sq.ft)</option>
-  </select>
-</div>
+            <!-- Turf Size -->
+            <div class="col-12 col-md-6">
+              <label class="form-label">Turf Size</label>
+              <select id="turfSize" class="form-select" required>
+                <option value="">Select size</option>
+                <option value="Small">Small (5000–10000 sq.ft)</option>
+                <option value="Medium">Medium (10000–15000 sq.ft)</option>
+                <option value="Large">Large (15000–20000 sq.ft)</option>
+              </select>
+            </div>
 
+            <!-- Discount -->
+            <div class="col-12 col-md-6">
+              <label class="form-label">Discount (%)</label>
+              <input id="discount" type="number" class="form-control" min="0" max="100" placeholder="e.g. 10">
+              <div class="form-text">Enter discount percentage (0–100%).</div>
+            </div>
 
+            <!-- Slot Timings -->
+            <div class="col-12">
+              <label class="form-label">Available Slot Timings</label>
+              <div class="row g-3 align-items-end">
+                <div class="col-md-6">
+                  <label class="form-label">Start Time</label>
+                  <input id="startTime" type="time" class="form-control" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">End Time</label>
+                  <input id="endTime" type="time" class="form-control" required>
+                </div>
+              </div>
+              <div class="form-text">
+                Example: Open from <strong>06:00 AM</strong> to <strong>10:00 PM</strong>.
+              </div>
+            </div>
+
+            <!-- Morning / Afternoon / Evening Prices -->
+            <div class="col-12">
+              <label class="form-label">Set Time-Based Slot Prices</label>
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <label class="form-label">Morning (6 AM – 12 PM)</label>
+                  <input id="morningPrice" type="number" class="form-control" placeholder="e.g. 800">
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Afternoon (12 PM – 4 PM)</label>
+                  <input id="afternoonPrice" type="number" class="form-control" placeholder="e.g. 600">
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Evening (4 PM – 10 PM)</label>
+                  <input id="eveningPrice" type="number" class="form-control" placeholder="e.g. 1000">
+                </div>
+              </div>
+              <div class="form-text">
+                Leave blank to use base price for all slots.
+              </div>
+            </div>
+
+            <!-- Facilities -->
             <div class="col-12">
               <label class="form-label">Facilities (comma-separated)</label>
               <input id="facilities" class="form-control" placeholder="Parking, Floodlights, Washroom">
             </div>
+
+            <!-- Map -->
             <div class="col-12">
               <label class="form-label">Google Map URL</label>
               <input id="mapUrl" type="url" class="form-control">
             </div>
+
+            <!-- Photos -->
             <div class="col-12">
               <label class="form-label">Photos</label>
               <input id="photos" type="file" class="form-control" multiple accept="image/*">
             </div>
 
-            <!-- Promo Videos (optional) -->
+            <!-- Videos -->
             <div class="col-12">
               <label class="form-label">Promo Videos (optional)</label>
               <input
@@ -71,6 +123,7 @@
             </div>
           </div>
 
+          <!-- Save Button -->
           <div class="d-grid mt-3">
             <button class="btn btn-primary" type="submit">Save</button>
           </div>
@@ -88,26 +141,25 @@
   <script>requireAuth(['owner']);</script>
   <script src="assets/js/layout.js"></script>
   <script src="assets/js/owner-turf.js"></script>
+
   <script>
   document.addEventListener("DOMContentLoaded", () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const turfId = urlParams.get("tid");
-  const turfName = urlParams.get("tname") || "";
-  const turfPrice = urlParams.get("price") || "";
+    const urlParams = new URLSearchParams(window.location.search);
+    const turfId = urlParams.get("tid");
+    const turfName = urlParams.get("tname") || "";
+    const turfPrice = urlParams.get("price") || "";
 
-  // Auto-fill the fields
-  if (turfId) {
-    document.getElementById("name").value = turfName;
-    document.getElementById("price").value = turfPrice;
-
-    // Optional: fetch other fields from backend if needed
-    // e.g., facilities, mapUrl, photos
-  }
-});
-</script>
+    // Auto-fill the fields
+    if (turfId) {
+      document.getElementById("name").value = turfName;
+      document.getElementById("price").value = turfPrice;
+    }
+  });
+  </script>
 
 </body>
 </html>
+
 
 <!-- <!DOCTYPE html>
 <html lang="en">
