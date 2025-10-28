@@ -87,3 +87,186 @@ async function forgotPassword(email, { role = 'admin' } = {}) {
   return { message: `If the email exists, a reset link has been sent to ${email}.` };
 }
 window.forgotPassword = forgotPassword;
+
+
+
+///////////////---------------------------new code wih post api
+
+// const AUTH_KEY = "tb_user";  // stored in localStorage
+
+// // =====================================================
+// // ✅ Get user details from localStorage
+// // =====================================================
+// function getUser() {
+//   try { 
+//     return JSON.parse(localStorage.getItem(AUTH_KEY) || "null"); 
+//   } catch { 
+//     return null; 
+//   }
+// }
+
+// // =====================================================
+// // ✅ Check if token (user session) exists
+// // =====================================================
+// function getToken() {
+//   return !!getUser(); // mimic "token present"
+// }
+
+// // =====================================================
+// // ✅ Get logged-in user's role
+// // =====================================================
+// function getRole() {
+//   return getUser()?.role || null;
+// }
+
+// // =====================================================
+// // ✅ Save user details in localStorage
+// // =====================================================
+// function setUser(u) {
+//   localStorage.setItem(AUTH_KEY, JSON.stringify(u));
+// }
+
+// // =====================================================
+// // ✅ Logout user and redirect to login page
+// // =====================================================
+// function logout() {
+//   localStorage.removeItem(AUTH_KEY);
+//   localStorage.removeItem("redirectAfterLogin"); // optional cleanup
+//   location.href = "login.html";
+// }
+
+// // =====================================================
+// // ✅ POST: Login user
+// // =====================================================
+// async function loginUser(email, password) {
+//   try {
+//     const response = await fetch("/api/auth/login", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({ email, password })
+//     });
+
+//     if (!response.ok) {
+//       throw new Error(`Login failed with status ${response.status}`);
+//     }
+
+//     const data = await response.json();
+//     return data; // { token, user, message, etc. }
+//   } catch (error) {
+//     console.error("Login error:", error);
+//     throw error;
+//   }
+// }
+
+// // =====================================================
+// // ✅ POST: Register new customer
+// // =====================================================
+// async function registerUser(name, email, password, mobileNo) {
+//   try {
+//     const response = await fetch("/api/auth/register", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({ name, email, password, mobileNo })
+//     });
+
+//     if (!response.ok) {
+//       throw new Error(`Registration failed with status ${response.status}`);
+//     }
+
+//     const data = await response.json();
+//     return data; // { message: "User registered successfully", etc. }
+//   } catch (error) {
+//     console.error("Registration error:", error);
+//     throw error;
+//   }
+// }
+
+// // =====================================================
+// // ✅ Login Page Script (Attach Event)
+// // =====================================================
+// function initLoginPage() {
+//   const form = document.querySelector("#loginForm");
+//   if (!form) return;
+
+//   form.addEventListener("submit", async (e) => {
+//     e.preventDefault();
+
+//     const email = document.querySelector("#loginEmail").value.trim();
+//     const password = document.querySelector("#loginPassword").value.trim();
+//     const role  = document.querySelector("#loginRole").value;
+//     const name  = email.split("@")[0];
+
+//     try {
+//       const result = await loginUser(email, password);
+//       console.log("Login success:", result);
+//       setUser({ email, role, name });
+
+//       const pending = localStorage.getItem("redirectAfterLogin");
+//       let target;
+//       if (pending) {
+//         target = pending;
+//       } else if (role === "customer") {
+//         target = "book-slot.html";
+//       } else if (role === "owner") {
+//         target = "owner-dashboard.html";
+//       } else {
+//         target = "admin-dashboard.html";
+//       }
+
+//       localStorage.removeItem("redirectAfterLogin");
+//       location.href = target;
+//     } catch (err) {
+//       alert("Login failed! Please check credentials.");
+//     }
+//   });
+// }
+
+// // =====================================================
+// // ✅ Register Customer Script (Attach Event)
+// // =====================================================
+// function initRegisterCustomerPage() {
+//   const form = document.querySelector("#registerCustomerForm");
+//   if (!form) return;
+
+//   form.addEventListener("submit", async (e) => {
+//     e.preventDefault();
+
+//     const name = document.querySelector("#registerName").value.trim();
+//     const email = document.querySelector("#registerEmail").value.trim();
+//     const password = document.querySelector("#registerPassword").value.trim();
+//     const mobileNo = document.querySelector("#registerMobile").value.trim();
+
+//     try {
+//       const result = await registerUser(name, email, password, mobileNo);
+//       console.log("Registration success:", result);
+//       alert("Registered successfully! Please login now.");
+//       location.href = "login.html";
+//     } catch (err) {
+//       alert("Registration failed! Please try again.");
+//     }
+//   });
+// }
+
+// // =====================================================
+// // ✅ Auto initialize login/register pages
+// // =====================================================
+// document.addEventListener("DOMContentLoaded", () => {
+//   initLoginPage();
+//   initRegisterCustomerPage();
+// });
+
+// // =====================================================
+// // ✅ Expose helper functions globally (for layout.js)
+// // =====================================================
+// window.getRole = getRole;
+// window.getToken = getToken;
+// window.logout = logout;
+
+// // =====================================================
+// // ✅ Forgot Password (Mocked)
+// // =====================================================
+// async function forgotPassword(email, { role = 'admin' } = {}) {
+//   await new Promise(r=>setTimeout(r,300)); // mock delay
+//   return { message: `If the email exists, a reset link has been sent to ${email}.` };
+// }
+// window.forgotPassword = forgotPassword;
